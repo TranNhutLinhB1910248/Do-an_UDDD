@@ -10,7 +10,7 @@ Học kỳ 2, Năm học 2022-2023
 
 **Họ tên SV 2**: Trần Nhựt Linh
 
-**Lớp học phần**: Ct48402
+**Lớp học phần**: CT48402
 
 **Tên dự án**: Ứng dụng mạng xã hội
 
