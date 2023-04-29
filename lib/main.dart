@@ -56,6 +56,49 @@ class MyApp extends StatelessWidget {
                           : const AuthScreen();
                     },
                   ),
+            routes: {
+              AccountPostsScreen.routeName: (ctx) => const AccountPostsScreen(),
+            },
+            onGenerateRoute: (settings) {
+              if (settings.name == PostDetailScreen.routeName) {
+                final postId = settings.arguments as String;
+                return MaterialPageRoute(
+                  builder: (ctx) {
+                    return PostDetailScreen(
+                      ctx.read<PostsManager>().findById(postId),
+                    );
+                  },
+                );
+              }
+
+              if (settings.name == AddCommentPostScreen.routeName) {
+                final productId = settings.arguments as String?;
+                return MaterialPageRoute(
+                  builder: (ctx) {
+                    return AddCommentPostScreen(
+                      productId != null
+                          ? ctx.read<PostsManager>().findById(productId)
+                          : null,
+                    );
+                  },
+                );
+              }
+
+              if (settings.name == EditPostScreen.routeName) {
+                final postId = settings.arguments as String?;
+                return MaterialPageRoute(
+                  builder: (ctx) {
+                    return EditPostScreen(
+                      postId != null
+                          ? ctx.read<PostsManager>().findById(postId)
+                          : null,
+                    );
+                  },
+                );
+              }
+
+              return null;
+            },
           );
         },
       ),

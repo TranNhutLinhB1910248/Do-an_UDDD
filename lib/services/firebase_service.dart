@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/auth_token.dart';
-
+// FirebaseService lưu giữ những tham số cần thiết để thực hiện các lời gọi REST API
 abstract class FirebaseService{
   String? _token;
   String? _userId;

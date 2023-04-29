@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'comment.dart';
+
 class Post {
   final String? id;
   final String content;
@@ -7,6 +9,11 @@ class Post {
   final DateTime dateTime;
   final ValueNotifier<bool> _isFavorite;
   final ValueNotifier<int> _favoriteCount;
+  final ValueNotifier<List<Comment>> _comments;
+
+  // int get commentCount {
+  //   return comments.length;
+  // }
 
   Post({
     this.id,
@@ -15,8 +22,10 @@ class Post {
     DateTime? dateTime,
     isFavorite = false,
     favoriteCount = 0,
+    List<Comment>? comments,
   })  : _isFavorite = ValueNotifier(isFavorite),
         _favoriteCount = ValueNotifier(favoriteCount),
+        _comments = ValueNotifier(comments ?? []),
         dateTime = dateTime ?? DateTime.now();
 
   set isFavorite(bool newValue) {
@@ -51,6 +60,22 @@ class Post {
     }
   }
 
+  set comments(List<Comment> newValue) {
+    _comments.value = newValue;
+  }
+
+  List<Comment> get comments {
+    return _comments.value;
+  }
+
+  ValueNotifier<List<Comment>> get commentCountListenable {
+    return _comments;
+  }
+
+  void updateComments(Comment newComment) {
+    _comments.value = [...comments, newComment];
+  }
+
   Post copyWith({
     String? id,
     String? content,
@@ -58,6 +83,7 @@ class Post {
     DateTime? dateTime,
     bool? isFavorite,
     int? favoriteCount,
+    List<Comment>? comments,
   }) {
     return Post(
       id: id ?? this.id,
@@ -66,23 +92,33 @@ class Post {
       dateTime: dateTime ?? this.dateTime,
       isFavorite: isFavorite ?? this.isFavorite,
       favoriteCount: favoriteCount ?? this.favoriteCount,
+      comments: comments ?? this.comments,
     );
   }
-
+// phương thức toJson() và fromJson() giúp chuyển
+// đổi qua lại giữa một đối tượng Post và chuỗi JSON.
   Map<String, dynamic> toJson() {
     return {
       'content': content,
       'imageUrl': imageUrl,
       'dateTime': dateTime.toIso8601String(),
+      'comments':
+          List<dynamic>.from(comments.map((comment) => comment.toJson())),
     };
   }
 
   static Post fromJson(Map<String, dynamic> json) {
+    final comments = json['comments'] as List<dynamic>?;
+
+    final commentList =
+        comments?.map((comment) => Comment.fromJson(comment)).toList() ?? [];
+
     return Post(
       id: json['id'],
       content: json['content'],
       imageUrl: json['imageUrl'],
       dateTime: DateTime.parse(json['dateTime']),
+      comments: commentList,
     );
   }
 }

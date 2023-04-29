@@ -1,36 +1,37 @@
-//bai post tren trang chu
+//cac bai post tren trang ca nhan
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/post.dart';
+import 'edit_post_screen.dart';
 import 'post_detail_screen.dart';
 import 'posts_manager.dart';
 import 'package:intl/intl.dart' as intl;
 
-class PostListTile extends StatelessWidget {
-  const PostListTile(
+class AccountPostListTile extends StatelessWidget {
+  final Post post;
+
+  const AccountPostListTile(
     this.post, {
     super.key,
   });
-
-  final Post post;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildHeaderPost(),
+        buildInforHeaderPost(context),
         buildImagePost(context),
         buildIconFavoritePost(context),
-        buildCountFavoritePost(context),
+        buildCountFavoritePost(),
         buildContentPost(),
       ],
     );
   }
 
-  Widget buildHeaderPost() {
+  Widget buildInforHeaderPost(BuildContext context) {
     final now = DateTime.now();
     final difference = now.difference(post.dateTime);
 
@@ -46,14 +47,21 @@ class PostListTile extends StatelessWidget {
     } else {
       timeAgo = 'just now';
     }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 16.0, 8.0, 16.0),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(post.imageUrl),
-            radius: 20.0,
-          ),
+                radius: 20.0,
+                backgroundColor: Color(0xff74EDED),
+                backgroundImage: NetworkImage(
+                    "https://tse1.mm.bing.net/th?id=OIP.v6XJwvqSeoFeVjLpMNe_7gHaEo&pid=Api&P=0"),
+              ),
+          // CircleAvatar(
+          //   backgroundImage: NetworkImage(post.imageUrl),
+          //   radius: 20.0,
+          // ),
           const SizedBox(width: 16.0),
           Expanded(
             child: Column(
@@ -76,8 +84,57 @@ class PostListTile extends StatelessWidget {
               ],
             ),
           ),
+          buildPostFilterMenu(context),
         ],
       ),
+    );
+  }
+
+  Widget buildPostFilterMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      icon: const Icon(
+        Icons.more_vert,
+      ),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: "edit",
+          child: Row(
+            children: const [
+              SizedBox(width: 8),
+              Text("Edit"),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: "delete",
+          child: Row(
+            children: const [
+              SizedBox(width: 8),
+              Text("Delete"),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (String value) {
+        if (value == "edit") {
+          Navigator.of(context).pushNamed(
+            EditPostScreen.routeName,
+            arguments: post.id,
+          );
+        } else if (value == "delete") {
+          context.read<PostsManager>().deletePost(post.id!);
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Post deleted',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+        }
+      },
     );
   }
 
@@ -99,6 +156,24 @@ class PostListTile extends StatelessWidget {
     );
   }
 
+  Widget buildCountFavoritePost() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ValueListenableBuilder<int>(
+        valueListenable: post.favoriteCountListenable,
+        builder: (ctx, favoriteCount, child) {
+          return Text(
+            '${intl.NumberFormat.decimalPattern().format(favoriteCount).split(',').join('.')} likes',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+            ),
+          );
+        },
+      ),
+    );
+  }
+//ValueListenableBuilder lắng nghe sự thay đổi giá trị của biến:
   Widget buildIconFavoritePost(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -127,24 +202,6 @@ class PostListTile extends StatelessWidget {
             icon: const Icon(Icons.mode_comment_outlined),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildCountFavoritePost(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ValueListenableBuilder<int>(
-        valueListenable: post.favoriteCountListenable,
-        builder: (ctx, favoriteCount, child) {
-          return Text(
-            '${intl.NumberFormat.decimalPattern().format(favoriteCount).split(',').join('.')} likes',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
-            ),
-          );
-        },
       ),
     );
   }

@@ -1,3 +1,4 @@
+//tao danh sach cac bai post tren trang chu
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,6 @@ class PostsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final postsManager = PostsManager();
     final posts = context.select<PostsManager, List<Post>>(
       (postsManager) => showFavorites
       ? postsManager.favoriteItems

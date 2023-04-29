@@ -12,6 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
+  google_fonts: ^3.0.1
 
 
 
@@ -21,6 +23,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   provider: ^6.0.5
   intl: ^0.18.0
+  
+  
 
 dev_dependencies:
   flutter_test:
@@ -35,4 +39,7 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/
+    - assets/icons/
+    - assets/images/
   

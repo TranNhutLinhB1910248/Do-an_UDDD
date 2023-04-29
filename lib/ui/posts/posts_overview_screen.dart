@@ -1,3 +1,4 @@
+//trang chu
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,9 +6,8 @@ import 'posts_manager.dart';
 import 'posts_list.dart';
 
 import '../shared/app_drawer.dart';
-
-enum FilterOptions { favorites, all }
-
+// thực hiện tải danh mục post khi khởi tạo.
+// Trong quá trình tải dữ liệu thì hiển thị thanh tiến trình chờ
 class PostsOverviewScreen extends StatefulWidget {
   const PostsOverviewScreen({super.key});
 
@@ -16,7 +16,7 @@ class PostsOverviewScreen extends StatefulWidget {
 }
 
 class _PostsOverviewScreenState extends State<PostsOverviewScreen> {
-  final _showOnlyFavorites = ValueNotifier<bool>(false);
+  final _showAllFavorites = ValueNotifier<bool>(false);
   late Future<void> _fetchPosts;
 
   @override
@@ -37,9 +37,9 @@ class _PostsOverviewScreenState extends State<PostsOverviewScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return ValueListenableBuilder<bool>(
-              valueListenable: _showOnlyFavorites,
-              builder: (context, onlyFavorites, child) {
-                return PostsList(onlyFavorites);
+              valueListenable: _showAllFavorites,
+              builder: (context, allFavorites, child) {
+                return PostsList(allFavorites);
               },
             );
           }
